@@ -10,11 +10,37 @@ export default function OrderForm() {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     const form = e.currentTarget;
+    const formData = new FormData();
+    formData.append("navn", (form.elements.namedItem("navn") as HTMLInputElement).value);
+    formData.append("epost", (form.elements.namedItem("epost") as HTMLInputElement).value);
+    formData.append("pakke", (form.elements.namedItem("pakke") as HTMLSelectElement).value);
+    formData.append("russekull", (form.elements.namedItem("russekull") as HTMLInputElement).value);
+    formData.append("beskrivelse", (form.elements.namedItem("beskrivelse") as HTMLTextAreaElement).value);
+    files.forEach((fil) => formData.append("bilder", fil));
+
+    const res = await fetch("/api/orders", { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Noe gikk galt, prøv igjen.");
+      setLoading(false);
+      return;
+    }
+
     const navn = (form.elements.namedItem("navn") as HTMLInputElement).value;
     const pakke = (form.elements.namedItem("pakke") as HTMLSelectElement).value;
+    setLoading(false);
+    setSuccess(true);
     router.push(`/checkout?navn=${encodeURIComponent(navn)}&pakke=${encodeURIComponent(pakke)}`);
   };
 
@@ -156,12 +182,16 @@ export default function OrderForm() {
             )}
           </div>
 
+          {error && (
+            <p className="text-sm text-center" style={{ color: "#ef4444" }}>{error}</p>
+          )}
           <button
             type="submit"
-            className="w-full py-4 text-sm font-bold rounded-full transition-all hover:opacity-80 active:scale-[0.99] cursor-pointer"
+            disabled={loading}
+            className="w-full py-4 text-sm font-bold rounded-full transition-all hover:opacity-80 active:scale-[0.99] cursor-pointer disabled:opacity-60"
             style={{ background: "#7c3aed", color: "#fff" }}
           >
-            Gå til betaling →
+            {loading ? "Sender..." : "Gå til betaling →"}
           </button>
         </form>
       </div>

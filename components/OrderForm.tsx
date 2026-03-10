@@ -33,10 +33,8 @@ export default function OrderForm() {
       return;
     }
 
-    const navn = (form.elements.namedItem("navn") as HTMLInputElement).value;
-    const pakke = (form.elements.namedItem("pakke") as HTMLSelectElement).value;
     setLoading(false);
-    router.push(`/checkout?orderId=${data.orderId}&navn=${encodeURIComponent(navn)}&pakke=${encodeURIComponent(pakke)}`);
+    router.push(`/bestilling-bekreftet`);
   };
 
   const handleFiles = (newFiles: FileList | null) => {

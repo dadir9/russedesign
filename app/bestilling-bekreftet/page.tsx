@@ -11,11 +11,11 @@ export default function BestillingBekreftet() {
           <span className="text-3xl text-white font-black">✓</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black mb-3" style={{ color: "#111827" }}>
-          Betaling bekreftet!
+          Bestilling mottatt!
         </h1>
         <p className="text-gray-500 mb-2">Tusen takk for bestillingen din!</p>
         <p className="text-gray-400 text-sm mb-8">
-          Du har mottatt en bekreftelse på e-post. Vi starter på logoen din og leverer innen avtalt tid.
+          Vi har mottatt bestillingen og tar kontakt med deg innen kort tid.
         </p>
         <button
           onClick={() => router.push("/")}

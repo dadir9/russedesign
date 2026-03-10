@@ -11,11 +11,16 @@ const prices: Record<string, { amount: number; name: string }> = {
 };
 
 export async function POST(req: NextRequest) {
+  if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes("FYLL_INN")) {
+    return NextResponse.json({ error: "Stripe er ikke konfigurert. Legg til STRIPE_SECRET_KEY i .env.local." }, { status: 500 });
+  }
+
   const { orderId, pakke, navn } = await req.json();
 
   const pkg = prices[pakke] ?? prices.standard;
   const deposit = Math.round(pkg.amount / 2);
 
+  try {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [
@@ -40,4 +45,8 @@ export async function POST(req: NextRequest) {
     .eq("id", orderId);
 
   return NextResponse.json({ url: session.url });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Ukjent feil";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

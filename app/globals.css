@@ -5,24 +5,24 @@ html {
 }
 
 body {
-  background: #0a0a0f;
-  color: #f1f5f9;
+  background: #faf8f4;
+  color: #1a1410;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 .grid-bg {
   background-image:
-    linear-gradient(rgba(124, 58, 237, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124, 58, 237, 0.07) 1px, transparent 1px);
+    linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
   background-size: 56px 56px;
 }
 
 .gradient-lines {
   background:
-    linear-gradient(180deg, rgba(124,58,237,0.18) 0%, transparent 60%) left 10% top / 1px 600px no-repeat,
-    linear-gradient(180deg, rgba(139,92,246,0.12) 0%, transparent 60%) left 25% top / 1px 500px no-repeat,
-    linear-gradient(180deg, rgba(124,58,237,0.12) 0%, transparent 60%) right 25% top / 1px 500px no-repeat,
-    linear-gradient(180deg, rgba(124,58,237,0.18) 0%, transparent 60%) right 10% top / 1px 600px no-repeat;
+    linear-gradient(180deg, rgba(124,58,237,0.1) 0%, transparent 60%) left 10% top / 1px 600px no-repeat,
+    linear-gradient(180deg, rgba(139,92,246,0.07) 0%, transparent 60%) left 25% top / 1px 500px no-repeat,
+    linear-gradient(180deg, rgba(124,58,237,0.07) 0%, transparent 60%) right 25% top / 1px 500px no-repeat,
+    linear-gradient(180deg, rgba(124,58,237,0.1) 0%, transparent 60%) right 10% top / 1px 600px no-repeat;
 }
 
 @keyframes marquee {

@@ -8,9 +8,8 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full z-50 backdrop-blur-md" style={{ background: "rgba(10,10,15,0.85)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
 
-        <a href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black" style={{ background: "#7c3aed" }}>RD</div>
-          <span className="font-black text-base text-white hidden sm:block">RusseDesign</span>
+        <a href="/" className="flex items-center">
+          <span className="font-black text-base" style={{ color: "#f5f0e8" }}>RusseDesign</span>
         </a>
 
         <div className="hidden md:flex items-center gap-1 px-2 py-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>

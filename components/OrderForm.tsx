@@ -41,7 +41,7 @@ export default function OrderForm() {
     const pakke = (form.elements.namedItem("pakke") as HTMLSelectElement).value;
     setLoading(false);
     setSuccess(true);
-    router.push(`/checkout?navn=${encodeURIComponent(navn)}&pakke=${encodeURIComponent(pakke)}`);
+    router.push(`/checkout?orderId=${data.orderId}&navn=${encodeURIComponent(navn)}&pakke=${encodeURIComponent(pakke)}`);
   };
 
   const handleFiles = (newFiles: FileList | null) => {

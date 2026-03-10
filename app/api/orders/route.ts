@@ -47,6 +47,8 @@ export async function POST(req: NextRequest) {
   }
 
   // Send e-post til eier med alle ordredetaljer
+  console.log("RESEND_KEY finnes:", !!process.env.RESEND_API_KEY);
+  console.log("OWNER_EMAIL:", process.env.OWNER_EMAIL);
   if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes("FYLL_INN")) {
     try {
       await resend.emails.send({
@@ -69,9 +71,12 @@ export async function POST(req: NextRequest) {
           </div>
         `,
       });
+      console.log("E-post sendt OK");
     } catch (e) {
       console.error("E-post feil:", e);
     }
+  } else {
+    console.log("E-post hoppet over — mangler API-nøkkel");
   }
 
   return NextResponse.json({ success: true, orderId: order.id });

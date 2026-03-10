@@ -1,49 +1,54 @@
 "use client";
-import { useTheme } from "@/context/ThemeContext";
 
 const items = [
-  { label: "Klassisk", sub: "Russ 2025", lightBg: "#f3e8ff", darkBg: "#2d1a4e", accent: "#7c3aed" },
-  { label: "Pink Vibes", sub: "Russ 2025", lightBg: "#fce7f3", darkBg: "#3d1a2e", accent: "#ec4899" },
-  { label: "Minimalist", sub: "Russ 2025", lightBg: "#eff6ff", darkBg: "#1a2a3e", accent: "#3b82f6" },
-  { label: "Bold", sub: "Russ 2025", lightBg: "#fef3c7", darkBg: "#2e2a1a", accent: "#f59e0b" },
-  { label: "Vintage", sub: "Russ 2025", lightBg: "#dcfce7", darkBg: "#1a2e1a", accent: "#16a34a" },
-  { label: "Arctic", sub: "Russ 2025", lightBg: "#f0f9ff", darkBg: "#1a2a3e", accent: "#0ea5e9" },
+  { label: "Klassisk", category: "RUSSEKOFTE", accent: "#7c3aed", bg: "linear-gradient(135deg, #1a0a2e, #2d1a4e)" },
+  { label: "Pink Vibes", category: "BUSS", accent: "#ec4899", bg: "linear-gradient(135deg, #1a0a1e, #3d1a2e)" },
+  { label: "Minimalist", category: "BIL", accent: "#3b82f6", bg: "linear-gradient(135deg, #0a1a2e, #1a2a3e)" },
+  { label: "Bold", category: "RUSSEKOFTE", accent: "#f59e0b", bg: "linear-gradient(135deg, #1a150a, #2e2a1a)" },
+  { label: "Vintage", category: "BUSS", accent: "#10b981", bg: "linear-gradient(135deg, #0a1a10, #1a2e1a)" },
+  { label: "Arctic", category: "BIL", accent: "#0ea5e9", bg: "linear-gradient(135deg, #0a1a2a, #1a2a3a)" },
 ];
 
 export default function Gallery() {
-  const { dark } = useTheme();
-
   return (
-    <section id="galleri" className="py-16 sm:py-24 px-4 sm:px-6 transition-all duration-300" style={{ background: dark ? "#1a1a2e" : "linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%)" }}>
+    <section id="galleri" className="py-24 px-4 sm:px-6" style={{ background: "#0a0a0f" }}>
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10 sm:mb-14">
-          <div className="inline-block px-3 py-1.5 rounded-full text-xs font-bold mb-3" style={{ background: dark ? "#2d1a4e" : "#f3e8ff", color: "#a78bfa" }}>
-            ✨ Galleri
+        <div className="mb-14">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#7c3aed" }}>Galleri</p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <h2 className="text-3xl sm:text-5xl font-black text-white leading-tight">Tidligere design</h2>
+            <p className="text-sm" style={{ color: "#475569" }}>Placeholder — dine logoer vises her</p>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black transition-colors" style={{ color: dark ? "#f1f5f9" : "#111827" }}>
-            Tidligere design
-          </h2>
-          <p className="text-sm mt-2 transition-colors" style={{ color: dark ? "#64748b" : "#9ca3af" }}>Sjekk ut hva vi har laget! 🎨</p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
           {items.map((item, i) => (
             <div
               key={i}
-              className="aspect-square rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-[1.03] active:scale-[0.98]"
-              style={{ background: dark ? item.darkBg : item.lightBg }}
+              className="relative rounded-2xl overflow-hidden cursor-pointer group"
+              style={{ background: item.bg, aspectRatio: "4/3" }}
             >
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-3" style={{ background: item.accent }}>
-                <span className="text-lg sm:text-2xl font-black text-white">RD</span>
+              {/* Category label */}
+              <div className="absolute top-4 left-4 z-10">
+                <span className="text-xs font-black tracking-widest px-2 py-1 rounded" style={{ background: "rgba(0,0,0,0.5)", color: "#94a3b8" }}>
+                  {item.category}
+                </span>
               </div>
-              <p className="font-black text-xs sm:text-sm transition-colors" style={{ color: dark ? "#f1f5f9" : "#111827" }}>{item.label}</p>
-              <p className="text-xs mt-0.5 transition-colors" style={{ color: dark ? "#64748b" : "#9ca3af" }}>{item.sub}</p>
+
+              {/* Logo placeholder */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center font-black text-white text-lg sm:text-2xl transition-all group-hover:scale-110" style={{ background: item.accent }}>
+                  RD
+                </div>
+              </div>
+
+              {/* Hover overlay */}
+              <div className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100 flex items-end p-4" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)" }}>
+                <p className="text-white font-black text-sm">{item.label}</p>
+              </div>
             </div>
           ))}
         </div>
-        <p className="text-center text-xs sm:text-sm mt-6 transition-colors" style={{ color: dark ? "#64748b" : "#9ca3af" }}>
-          🖼️ Dine egne logoer vises her
-        </p>
       </div>
     </section>
   );

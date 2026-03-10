@@ -1,47 +1,87 @@
 "use client";
-import { useTheme } from "@/context/ThemeContext";
+
+const stats = [
+  { num: "500+", label: "Logoer laget" },
+  { num: "100%", label: "Fornøyde kunder" },
+  { num: "48t", label: "Leveringstid" },
+  { num: "2026", label: "Russekull" },
+];
+
+const marqueeItems = [
+  "Russekofte", "Buss", "Bil", "Minimalist", "Bold", "Klassisk",
+  "Pink Vibes", "Vintage", "Arctic", "Crew", "Graffiti", "Premium",
+  "Russekofte", "Buss", "Bil", "Minimalist", "Bold", "Klassisk",
+  "Pink Vibes", "Vintage", "Arctic", "Crew", "Graffiti", "Premium",
+];
 
 export default function Hero() {
-  const { dark } = useTheme();
-  const bg = dark ? "linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 50%, #0a0f1a 100%)" : "linear-gradient(135deg, #faf5ff 0%, #fdf2f8 50%, #eff6ff 100%)";
-
   return (
-    <section className="pt-14 min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 transition-all duration-300" style={{ background: bg }}>
-      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6 border" style={{ background: dark ? "#1e1040" : "#f5f3ff", color: "#7c3aed", borderColor: dark ? "#4c1d95" : "#ddd6fe" }}>
-        <span className="w-1.5 h-1.5 rounded-full bg-purple-500 inline-block" />
-        Russekull 2026 — Åpne bestillinger
-      </div>
+    <>
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 overflow-hidden grid-bg gradient-lines pt-16">
+        {/* Radial fade */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 40% at 50% 100%, rgba(10,10,15,0.9) 0%, transparent 60%)" }} />
 
-      <h1 className="text-4xl sm:text-6xl md:text-8xl font-black leading-none mb-5 transition-colors" style={{ color: dark ? "#f1f5f9" : "#0f0f13" }}>
-        Din
-        <span className="block" style={{ color: "#7c3aed" }}>russelogo.</span>
-      </h1>
-
-      <p className="text-base sm:text-lg max-w-sm sm:max-w-md mb-10 transition-colors leading-relaxed" style={{ color: dark ? "#94a3b8" : "#6b7280" }}>
-        Vi lager logoer til russekofter, biler og busser. Profesjonelt design, rask levering.
-      </p>
-
-      <div className="flex flex-col sm:flex-row gap-3 mb-14 w-full sm:w-auto px-2 sm:px-0">
-        <a href="#bestill" className="text-white font-bold px-8 py-3.5 rounded-full text-sm transition-all hover:opacity-90 text-center" style={{ background: "#7c3aed" }}>
-          Bestill logo
-        </a>
-        <a href="#galleri" className="font-semibold px-8 py-3.5 rounded-full text-sm border transition-all hover:border-purple-400 text-center" style={{ borderColor: dark ? "#2d2d4e" : "#e5e7eb", color: dark ? "#e2e8f0" : "#374151" }}>
-          Se eksempler
-        </a>
-      </div>
-
-      <div className="flex gap-8 sm:gap-16">
-        {[
-          { num: "500+", label: "Logoer laget" },
-          { num: "100%", label: "Fornøyde kunder" },
-          { num: "48t", label: "Leveringstid" },
-        ].map((s) => (
-          <div key={s.label} className="text-center">
-            <p className="text-2xl sm:text-3xl font-black transition-colors" style={{ color: dark ? "#f1f5f9" : "#0f0f13" }}>{s.num}</p>
-            <p className="text-xs font-medium mt-1 transition-colors" style={{ color: dark ? "#64748b" : "#9ca3af" }}>{s.label}</p>
+        <div className="relative z-10 fade-up">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-8 border" style={{ background: "rgba(124,58,237,0.1)", color: "#a78bfa", borderColor: "rgba(124,58,237,0.3)" }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block animate-pulse" />
+            Russekull 2026 — Åpne bestillinger
           </div>
-        ))}
+
+          {/* Heading */}
+          <h1 className="text-5xl sm:text-7xl md:text-[96px] font-black leading-none mb-6 tracking-tighter">
+            <span className="text-white">Vi lager din</span>
+            <span className="block relative inline-block mt-1">
+              <span style={{ background: "linear-gradient(90deg, #a78bfa, #7c3aed, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                russelogo.
+              </span>
+              {/* Animated underline */}
+              <svg className="absolute -bottom-3 left-0 w-full" height="8" viewBox="0 0 400 8" preserveAspectRatio="none">
+                <path d="M0 6 Q100 0 200 5 Q300 10 400 4" stroke="#7c3aed" strokeWidth="2.5" fill="none" strokeLinecap="round"
+                  style={{ strokeDasharray: 450, strokeDashoffset: 0, transition: "stroke-dashoffset 1s ease" }} />
+              </svg>
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg max-w-sm sm:max-w-lg mx-auto mb-10 leading-relaxed" style={{ color: "#64748b" }}>
+            Profesjonelt logodesign til russekofter, biler og busser. Rask levering, ubegrenset revisjoner.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="#bestill" className="text-white font-bold px-8 py-4 rounded-full text-sm transition-all hover:opacity-90 hover:scale-[1.02]" style={{ background: "#7c3aed" }}>
+              Bestill logo nå →
+            </a>
+            <a href="#galleri" className="font-semibold px-8 py-4 rounded-full text-sm border transition-all hover:border-purple-500 hover:text-white" style={{ borderColor: "rgba(255,255,255,0.1)", color: "#64748b" }}>
+              Se eksempler
+            </a>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="relative z-10 w-full max-w-2xl mt-20 mb-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+            {stats.map((s, i) => (
+              <div key={i} className="flex flex-col items-center py-6 px-4" style={{ borderRight: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                <p className="text-2xl sm:text-3xl font-black text-white">{s.num}</p>
+                <p className="text-xs mt-1" style={{ color: "#475569" }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Marquee */}
+      <div className="w-full overflow-hidden py-5 border-y" style={{ background: "#0d0d14", borderColor: "rgba(255,255,255,0.05)" }}>
+        <div className="flex gap-10 marquee-track whitespace-nowrap">
+          {marqueeItems.map((item, i) => (
+            <span key={i} className="text-sm font-bold flex items-center gap-3 flex-shrink-0" style={{ color: "#334155" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-700 inline-block" />
+              {item}
+            </span>
+          ))}
+        </div>
       </div>
-    </section>
+    </>
   );
 }

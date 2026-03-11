@@ -11,10 +11,10 @@ export default function Footer() {
           <div className="flex gap-8 text-sm font-medium" style={{ color: "#475569" }}>
             <a href="#pakker" className="hover:text-white transition-colors">Pakker</a>
             <a href="#galleri" className="hover:text-white transition-colors">Galleri</a>
-            <a href="#bestill" className="hover:text-white transition-colors">Bestill</a>
+            <a href="/bestill" className="hover:text-white transition-colors">Bestill</a>
           </div>
 
-          <a href="#bestill" className="text-white text-sm font-bold px-6 py-2.5 rounded-full transition-all hover:opacity-80" style={{ background: "#7c3aed" }}>
+          <a href="/bestill" className="text-white text-sm font-bold px-6 py-2.5 rounded-full transition-all hover:opacity-80" style={{ background: "#7c3aed" }}>
             Bestill nå →
           </a>
         </div>

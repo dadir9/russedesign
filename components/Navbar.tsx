@@ -24,7 +24,7 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
-          {[["Pakker", "#pakker"], ["Galleri", "#galleri"], ["Bestill", "#bestill"]].map(([label, href]) => (
+          {[["Pakker", "#pakker"], ["Galleri", "#galleri"], ["Bestill", "/bestill"]].map(([label, href]) => (
             <a
               key={label}
               href={href}
@@ -43,7 +43,7 @@ export default function Navbar() {
         {/* Right side */}
         <div className="flex items-center gap-3">
           <a
-            href="#bestill"
+            href="/bestill"
             className="hidden md:block text-white text-sm font-bold px-6 py-2.5 rounded-full transition-all hover:opacity-90 hover:scale-[1.02]"
             style={{ background: "#7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.3)" }}
           >
@@ -71,7 +71,7 @@ export default function Navbar() {
           className="md:hidden px-6 pb-4 flex flex-col gap-1"
           style={{ background: "rgba(10,10,15,0.97)", borderTop: "1px solid rgba(255,255,255,0.06)" }}
         >
-          {[["Pakker", "#pakker"], ["Galleri", "#galleri"], ["Bestill", "#bestill"]].map(([label, href]) => (
+          {[["Pakker", "#pakker"], ["Galleri", "#galleri"], ["Bestill", "/bestill"]].map(([label, href]) => (
             <a
               key={label}
               href={href}
@@ -83,7 +83,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="#bestill"
+            href="/bestill"
             onClick={() => setOpen(false)}
             className="mt-2 text-center text-white text-sm font-bold py-3 rounded-full"
             style={{ background: "#7c3aed" }}

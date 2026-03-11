@@ -182,7 +182,7 @@ export default function AdminPage() {
             return (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => setActiveTab(tab as typeof activeTab)}
                 className="text-xs font-bold px-4 py-2 rounded-full transition-all capitalize"
                 style={{
                   background: activeTab === tab ? (tab === "alle" ? "#7c3aed" : statusColors[tab]) : "rgba(255,255,255,0.05)",

@@ -25,7 +25,7 @@ const packages = [
 export default function Packages() {
   const router = useRouter();
   const handleVelg = (value: string) => {
-    router.push(`/bestill?pakke=${value}`);
+    router.push(`/bestill/${value}`);
   };
 
   return (

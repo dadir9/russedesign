@@ -18,7 +18,7 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
-          {[["Pakker", "#pakker"], ["Galleri", "#galleri"], ["Bestill", "/bestill"]].map(([label, href]) => (
+          {[["Pakker", "/#pakker"], ["Galleri", "/#galleri"], ["Bestill", "/bestill"]].map(([label, href]) => (
             <a
               key={label}
               href={href}
@@ -57,7 +57,7 @@ export default function Navbar() {
           className="md:hidden px-6 pb-4 flex flex-col gap-1"
           style={{ background: "rgba(10,10,15,0.97)", borderTop: "1px solid rgba(255,255,255,0.06)" }}
         >
-          {[["Pakker", "#pakker"], ["Galleri", "#galleri"], ["Bestill", "/bestill"]].map(([label, href]) => (
+          {[["Pakker", "/#pakker"], ["Galleri", "/#galleri"], ["Bestill", "/bestill"]].map(([label, href]) => (
             <a
               key={label}
               href={href}

@@ -55,6 +55,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Order | null>(null);
   const [filterStatus, setFilterStatus] = useState("alle");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [actionDropdown, setActionDropdown] = useState<string | null>(null);
+  const [orderPage, setOrderPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [galleryLoading, setGalleryLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -146,8 +150,7 @@ export default function AdminPage() {
   const thisWeek = orders.filter(o => (Date.now() - new Date(o.created_at).getTime()) / 86400000 <= 7);
   const delivered = orders.filter(o => o.status === "levert");
   const inProgress = orders.filter(o => o.status === "under arbeid");
-  const filtered = filterStatus === "alle" ? orders : orders.filter(o => o.status === filterStatus);
-  const recentOrders = [...orders].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6);
+  const recentOrders =[...orders].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6);
 
   // Monthly data (last 6 months)
   const months = Array.from({ length: 6 }, (_, i) => {
@@ -373,145 +376,226 @@ export default function AdminPage() {
           )}
 
           {/* ── BESTILLINGER ── */}
-          {tab === "bestillinger" && (
-            <>
-              <div style={{ marginBottom: 24 }}>
-                <h1 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>Bestillinger</h1>
-                <p style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>Administrer alle kundebestillinger</p>
-              </div>
+          {tab === "bestillinger" && (() => {
+            const searched = orders.filter(o =>
+              o.navn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              o.epost.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              o.id.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            const filteredOrders = filterStatus === "alle" ? searched : searched.filter(o => o.status === filterStatus);
+            const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+            const paginated = filteredOrders.slice((orderPage - 1) * PAGE_SIZE, orderPage * PAGE_SIZE);
+            const shortId = (id: string) => "ORD-" + id.slice(0, 6).toUpperCase();
+            return (
+              <div onClick={() => setActionDropdown(null)}>
+                {/* Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+                  <div>
+                    <h1 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>Bestillinger</h1>
+                    <p style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>Administrer og følg opp alle kundebestillinger.</p>
+                  </div>
+                  <button onClick={() => fetchOrders(password)}
+                    style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 18px", borderRadius: 10, background: "#7c3aed", color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                    Oppdater
+                  </button>
+                </div>
 
-              {/* Filter */}
-              <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-                {["alle", ...statuses].map(s => {
-                  const count = s === "alle" ? orders.length : orders.filter(o => o.status === s).length;
-                  const active = filterStatus === s;
-                  const sc = s !== "alle" ? statusColors[s] : null;
-                  return (
-                    <button key={s} onClick={() => setFilterStatus(s)}
-                      style={{ padding: "7px 16px", borderRadius: 99, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, transition: "all 0.15s",
-                        background: active ? (sc?.dot ?? "#7c3aed") : "#f1f5f9", color: active ? "#fff" : "#64748b" }}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)} · {count}
-                    </button>
-                  );
-                })}
-              </div>
+                {/* Filter tabs */}
+                <div style={{ display: "flex", borderBottom: "1px solid #e2e8f0", marginBottom: 0, gap: 0 }}>
+                  {["alle", ...statuses].map(s => {
+                    const count = s === "alle" ? orders.length : orders.filter(o => o.status === s).length;
+                    const active = filterStatus === s;
+                    return (
+                      <button key={s} onClick={() => { setFilterStatus(s); setOrderPage(1); }}
+                        style={{ padding: "10px 18px", border: "none", borderBottom: active ? "2px solid #7c3aed" : "2px solid transparent", cursor: "pointer",
+                          fontSize: 13, fontWeight: active ? 700 : 500, background: "transparent",
+                          color: active ? "#7c3aed" : "#64748b", marginBottom: -1, transition: "all 0.15s" }}>
+                        {s === "alle" ? "Alle" : s.charAt(0).toUpperCase() + s.slice(1)}
+                        <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 700, background: active ? "#ede9fe" : "#f1f5f9", color: active ? "#7c3aed" : "#94a3b8", borderRadius: 99, padding: "1px 7px" }}>{count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
 
-              {/* Table */}
-              <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, overflow: "hidden" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "#f8fafc" }}>
-                      {["Kunde", "Pakke", "Russekull", "Status", "Beløp", "Dato", "Handling"].map(h => (
-                        <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                      <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}>Laster...</td></tr>
-                    ) : filtered.length === 0 ? (
-                      <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Ingen bestillinger her.</td></tr>
-                    ) : filtered.map(o => {
-                      const sc = statusColors[o.status] ?? { bg: "#f1f5f9", text: "#64748b", dot: "#94a3b8" };
-                      return (
-                        <>
-                          <tr key={o.id} style={{ borderTop: "1px solid #f1f5f9", background: selected?.id === o.id ? "#faf5ff" : "transparent", cursor: "pointer" }}
-                            onClick={() => setSelected(selected?.id === o.id ? null : o)}
-                            onMouseEnter={e => { if (selected?.id !== o.id) e.currentTarget.style.background = "#f8fafc"; }}
-                            onMouseLeave={e => { if (selected?.id !== o.id) e.currentTarget.style.background = "transparent"; }}>
-                            <td style={{ padding: "14px 16px" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                <Avatar name={o.navn} />
-                                <div>
-                                  <p style={{ fontSize: 14, fontWeight: 600, color: "#0f172a", margin: 0 }}>{o.navn}</p>
-                                  <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>{o.epost}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td style={{ padding: "14px 16px" }}>
-                              <span style={{ fontSize: 12, fontWeight: 700, background: "#ede9fe", color: "#7c3aed", padding: "3px 10px", borderRadius: 20 }}>{packageNames[o.pakke] ?? o.pakke}</span>
-                            </td>
-                            <td style={{ padding: "14px 16px", fontSize: 13, color: "#475569" }}>{o.russekull || "—"}</td>
-                            <td style={{ padding: "14px 16px" }}>
-                              <span style={{ fontSize: 12, fontWeight: 600, background: sc.bg, color: sc.text, padding: "3px 10px", borderRadius: 20, display: "inline-flex", alignItems: "center", gap: 5 }}>
-                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: sc.dot }} />{o.status}
-                              </span>
-                            </td>
-                            <td style={{ padding: "14px 16px", fontSize: 14, fontWeight: 700, color: "#0f172a" }}>{(packagePrices[o.pakke] ?? 0).toLocaleString("no")} kr</td>
-                            <td style={{ padding: "14px 16px", fontSize: 12, color: "#94a3b8" }}>{new Date(o.created_at).toLocaleDateString("no", { day: "numeric", month: "short", year: "numeric" })}</td>
-                            <td style={{ padding: "14px 16px" }}>
-                              <button style={{ fontSize: 12, fontWeight: 600, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>
-                                {selected?.id === o.id ? "Lukk ↑" : "Detaljer ↓"}
-                              </button>
-                            </td>
-                          </tr>
-                          {selected?.id === o.id && (
-                            <tr key={`${o.id}-detail`} style={{ background: "#faf5ff", borderTop: "1px solid #ede9fe" }}>
-                              <td colSpan={7} style={{ padding: "20px 24px" }}>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-                                  <div>
-                                    <p style={{ fontSize: 12, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Ønsket design</p>
-                                    <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.6, margin: 0 }}>{o.beskrivelse || "Ingen beskrivelse"}</p>
-                                    {o.bilder?.length > 0 && (
-                                      <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-                                        {o.bilder.map((url, i) => (
-                                          <a key={i} href={url} target="_blank" rel="noreferrer">
-                                            <img src={url} alt="" style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 10, border: "1px solid #e2e8f0" }} />
-                                          </a>
-                                        ))}
-                                      </div>
-                                    )}
+                {/* Table card */}
+                <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0 0 16px 16px", overflow: "visible" }}>
+                  {/* Search bar */}
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ position: "relative", flex: 1, maxWidth: 340 }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setOrderPage(1); }}
+                        placeholder="Søk på navn, e-post eller ordre-ID..."
+                        style={{ width: "100%", padding: "8px 12px 8px 36px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 13, outline: "none", color: "#0f172a", background: "#f8fafc", boxSizing: "border-box" }} />
+                    </div>
+                    <span style={{ fontSize: 13, color: "#94a3b8" }}>Viser {filteredOrders.length} bestillinger</span>
+                  </div>
+
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr style={{ background: "#f8fafc" }}>
+                          {["Ordre-ID", "Kunde", "Pakke", "Status", "Dato", "Beløp", ""].map(h => (
+                            <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loading ? (
+                          <tr><td colSpan={7} style={{ padding: 48, textAlign: "center", color: "#94a3b8" }}>Laster...</td></tr>
+                        ) : paginated.length === 0 ? (
+                          <tr><td colSpan={7} style={{ padding: 48, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Ingen bestillinger funnet.</td></tr>
+                        ) : paginated.map(o => {
+                          const sc = statusColors[o.status] ?? { bg: "#f1f5f9", text: "#64748b", dot: "#94a3b8" };
+                          const isOpen = actionDropdown === o.id;
+                          return (
+                            <>
+                              <tr key={o.id} style={{ borderTop: "1px solid #f1f5f9" }}
+                                onMouseEnter={e => (e.currentTarget.style.background = "#f8fafc")}
+                                onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+                                <td style={{ padding: "14px 16px", fontSize: 12, fontWeight: 700, color: "#7c3aed", fontFamily: "monospace" }}>
+                                  {shortId(o.id)}
+                                </td>
+                                <td style={{ padding: "14px 16px" }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <Avatar name={o.navn} />
+                                    <div>
+                                      <p style={{ fontSize: 13, fontWeight: 600, color: "#0f172a", margin: 0 }}>{o.navn}</p>
+                                      <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>{o.epost}</p>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <p style={{ fontSize: 12, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Endre status</p>
-                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-                                      {statuses.map(s => {
-                                        const sc2 = statusColors[s];
-                                        const isActive = o.status === s;
-                                        return (
-                                          <button key={s} onClick={e => { e.stopPropagation(); updateStatus(o.id, s); }}
-                                            style={{ padding: "7px 16px", borderRadius: 99, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600,
-                                              background: isActive ? sc2.dot : "#f1f5f9", color: isActive ? "#fff" : "#64748b" }}>
-                                            {s}
+                                </td>
+                                <td style={{ padding: "14px 16px" }}>
+                                  <span style={{ fontSize: 12, fontWeight: 700, background: "#ede9fe", color: "#7c3aed", padding: "3px 10px", borderRadius: 20 }}>{packageNames[o.pakke] ?? o.pakke}</span>
+                                </td>
+                                <td style={{ padding: "14px 16px" }}>
+                                  <span style={{ fontSize: 12, fontWeight: 600, background: sc.bg, color: sc.text, padding: "3px 10px", borderRadius: 20, display: "inline-flex", alignItems: "center", gap: 5 }}>
+                                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: sc.dot, flexShrink: 0 }} />{o.status}
+                                  </span>
+                                </td>
+                                <td style={{ padding: "14px 16px", fontSize: 13, color: "#64748b", whiteSpace: "nowrap" }}>
+                                  {new Date(o.created_at).toLocaleDateString("no", { day: "numeric", month: "short", year: "numeric" })}
+                                </td>
+                                <td style={{ padding: "14px 16px", fontSize: 14, fontWeight: 700, color: "#0f172a", whiteSpace: "nowrap" }}>
+                                  {(packagePrices[o.pakke] ?? 0).toLocaleString("no")} kr
+                                </td>
+                                <td style={{ padding: "14px 16px", position: "relative" }}>
+                                  <button onClick={e => { e.stopPropagation(); setActionDropdown(isOpen ? null : o.id); setSelected(isOpen ? null : o); }}
+                                    style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#374151" }}>
+                                    Handlinger
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                  </button>
+                                  {isOpen && (
+                                    <div onClick={e => e.stopPropagation()}
+                                      style={{ position: "absolute", right: 16, top: "100%", zIndex: 50, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", minWidth: 220, overflow: "hidden" }}>
+                                      <div style={{ padding: "8px 0" }}>
+                                        <p style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.8, padding: "4px 14px 6px" }}>Endre status</p>
+                                        {statuses.map(s => {
+                                          const sc2 = statusColors[s];
+                                          const isActive = o.status === s;
+                                          return (
+                                            <button key={s} onClick={() => { updateStatus(o.id, s); setActionDropdown(null); }}
+                                              style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 14px", border: "none", background: isActive ? "#f5f3ff" : "transparent", cursor: "pointer", fontSize: 13, fontWeight: isActive ? 700 : 500, color: isActive ? "#7c3aed" : "#374151", textAlign: "left" }}>
+                                              <span style={{ width: 8, height: 8, borderRadius: "50%", background: sc2.dot, flexShrink: 0 }} />
+                                              {s.charAt(0).toUpperCase() + s.slice(1)}
+                                              {isActive && <span style={{ marginLeft: "auto", fontSize: 11, color: "#7c3aed" }}>✓</span>}
+                                            </button>
+                                          );
+                                        })}
+                                        <div style={{ height: 1, background: "#f1f5f9", margin: "6px 0" }} />
+                                        {o.beskrivelse && (
+                                          <button onClick={() => { setSelected(selected?.id === o.id ? null : o); setActionDropdown(null); }}
+                                            style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 14px", border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: "#374151", textAlign: "left" }}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                            Se detaljer
                                           </button>
-                                        );
-                                      })}
+                                        )}
+                                        {o.status !== "avbrutt" && o.status !== "refundert" && (
+                                          <>
+                                            <button onClick={() => { cancelOrder(o.id); setActionDropdown(null); }}
+                                              style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 14px", border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: "#dc2626", textAlign: "left", fontWeight: 600 }}>
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                              Avslutt bestilling
+                                            </button>
+                                            <button onClick={() => { refundOrder(o); setActionDropdown(null); }}
+                                              style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 14px", border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: "#7c3aed", textAlign: "left", fontWeight: 600 }}>
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                                              Refunder kunde
+                                            </button>
+                                          </>
+                                        )}
+                                      </div>
                                     </div>
-                                    <p style={{ fontSize: 12, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Handlinger</p>
-                                    <div style={{ display: "flex", gap: 8 }}>
-                                      {o.status !== "avbrutt" && o.status !== "refundert" && (
-                                        <button onClick={e => { e.stopPropagation(); cancelOrder(o.id); }}
-                                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, background: "#fee2e2", color: "#dc2626" }}>
-                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                          Avslutt bestilling
+                                  )}
+                                </td>
+                              </tr>
+                              {/* Detail expand row */}
+                              {selected?.id === o.id && !isOpen && (
+                                <tr key={`${o.id}-detail`} style={{ background: "#faf5ff", borderTop: "1px solid #ede9fe" }}>
+                                  <td colSpan={7} style={{ padding: "20px 24px" }}>
+                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                                      <div>
+                                        <p style={{ fontSize: 11, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Russekull</p>
+                                        <p style={{ fontSize: 14, color: "#374151", margin: "0 0 16px" }}>{o.russekull || "—"}</p>
+                                        <p style={{ fontSize: 11, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Ønsket design</p>
+                                        <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.6, margin: 0 }}>{o.beskrivelse || "Ingen beskrivelse"}</p>
+                                        {o.bilder?.length > 0 && (
+                                          <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                                            {o.bilder.map((url, i) => (
+                                              <a key={i} href={url} target="_blank" rel="noreferrer">
+                                                <img src={url} alt="" style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 10, border: "1px solid #e2e8f0" }} />
+                                              </a>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div>
+                                        <p style={{ fontSize: 11, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Kontaktinfo</p>
+                                        <p style={{ fontSize: 14, color: "#374151", margin: "0 0 4px" }}>{o.navn}</p>
+                                        <a href={`mailto:${o.epost}`} style={{ fontSize: 14, color: "#7c3aed", textDecoration: "none" }}>{o.epost}</a>
+                                        <button onClick={() => setSelected(null)}
+                                          style={{ display: "block", marginTop: 20, fontSize: 12, fontWeight: 600, color: "#64748b", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                                          Lukk detaljer ↑
                                         </button>
-                                      )}
-                                      {o.status !== "refundert" && o.status !== "avbrutt" && (
-                                        <button onClick={e => { e.stopPropagation(); refundOrder(o); }}
-                                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, background: "#f3e8ff", color: "#7c3aed" }}>
-                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-                                          Refunder kunde
-                                        </button>
-                                      )}
-                                      {(o.status === "avbrutt" || o.status === "refundert") && (
-                                        <p style={{ fontSize: 13, color: "#94a3b8", padding: "8px 0" }}>
-                                          {o.status === "refundert" ? "✓ Kunden er refundert" : "✗ Bestilling avsluttet"}
-                                        </p>
-                                      )}
+                                      </div>
                                     </div>
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                                  </td>
+                                </tr>
+                              )}
+                            </>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination */}
+                  <div style={{ padding: "14px 20px", borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 13, color: "#64748b" }}>
+                      Viser {filteredOrders.length === 0 ? 0 : (orderPage - 1) * PAGE_SIZE + 1}–{Math.min(orderPage * PAGE_SIZE, filteredOrders.length)} av {filteredOrders.length} resultater
+                    </span>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button onClick={() => setOrderPage(p => Math.max(1, p - 1))} disabled={orderPage === 1}
+                        style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", fontSize: 13, fontWeight: 600, color: orderPage === 1 ? "#cbd5e1" : "#374151", cursor: orderPage === 1 ? "default" : "pointer" }}>
+                        ← Forrige
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                        <button key={p} onClick={() => setOrderPage(p)}
+                          style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, fontWeight: 700, cursor: "pointer",
+                            background: orderPage === p ? "#7c3aed" : "#fff", color: orderPage === p ? "#fff" : "#374151" }}>
+                          {p}
+                        </button>
+                      ))}
+                      <button onClick={() => setOrderPage(p => Math.min(totalPages, p + 1))} disabled={orderPage === totalPages}
+                        style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", fontSize: 13, fontWeight: 600, color: orderPage === totalPages ? "#cbd5e1" : "#374151", cursor: orderPage === totalPages ? "default" : "pointer" }}>
+                        Neste →
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </>
-          )}
+            );
+          })()}
 
           {/* ── GALLERI ── */}
           {tab === "galleri" && (

@@ -1,10 +1,12 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function KontoPage() {
+function KontoInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/konto/dashboard";
   const [mode, setMode] = useState<"register" | "login">("register");
   const [fornavn, setFornavn] = useState("");
   const [etternavn, setEtternavn] = useState("");
@@ -49,7 +51,7 @@ export default function KontoPage() {
     setError("");
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     if (err) { setError("Feil e-post eller passord."); setLoading(false); return; }
-    router.push("/konto/dashboard");
+    router.push(next);
   };
 
   const handleGoogle = async () => {
@@ -207,5 +209,13 @@ export default function KontoPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function KontoPage() {
+  return (
+    <Suspense>
+      <KontoInner />
+    </Suspense>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const packages = [
   {
@@ -24,8 +25,13 @@ const packages = [
 
 export default function Packages() {
   const router = useRouter();
-  const handleVelg = (value: string) => {
-    router.push(`/bestill/${value}`);
+  const handleVelg = async (value: string) => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      router.push(`/bestill/${value}`);
+    } else {
+      router.push(`/konto?next=/bestill/${value}`);
+    }
   };
 
   return (

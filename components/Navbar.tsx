@@ -12,13 +12,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between h-16">
 
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black text-white"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)" }}
-          >
-            R
-          </div>
+        <a href="/" className="flex items-center">
           <span className="font-black text-base" style={{ color: "#f5f0e8" }}>RusseDesign</span>
         </a>
 
@@ -42,14 +36,6 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          <a
-            href="/bestill"
-            className="hidden md:block text-white text-sm font-bold px-6 py-2.5 rounded-full transition-all hover:opacity-90 hover:scale-[1.02]"
-            style={{ background: "#7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.3)" }}
-          >
-            Bestill nå
-          </a>
-
           {/* Mobile hamburger */}
           <button
             className="md:hidden p-2 rounded-lg"

@@ -1,4 +1,5 @@
 "use client";
+import SparkleButton from "./SparkleButton";
 
 const stats = [
   { num: "500+", label: "Logoer laget" },
@@ -64,13 +65,7 @@ export default function Hero() {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-5">
-              <a
-                href="/bestill"
-                className="text-white font-bold px-8 py-4 rounded-full text-sm transition-all hover:opacity-90 hover:scale-[1.02] shadow-lg"
-                style={{ background: "#7c3aed", boxShadow: "0 8px 32px rgba(124,58,237,0.35)" }}
-              >
-                Bestill logo nå
-              </a>
+              <SparkleButton href="/bestill">Bestill logo nå</SparkleButton>
 
               <a href="#galleri" className="flex items-center gap-3 font-semibold text-sm transition-all hover:opacity-80" style={{ color: "#94a3b8" }}>
                 <span

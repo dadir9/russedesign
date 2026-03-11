@@ -49,7 +49,7 @@ export default function BestillClient({ pakke, data }: { pakke: string; data: Pa
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: auth }) => {
-      if (!auth.user) { router.push(`/konto?next=/bestill/${pakke}`); return; }
+      if (!auth.user) return;
       setEpost(auth.user.email || "");
       const { data: profile } = await supabase.from("profiles").select("*").eq("id", auth.user.id).single();
       if (profile) { setNavn(profile.navn || ""); setTelefon(profile.telefon || ""); }

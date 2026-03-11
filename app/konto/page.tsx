@@ -33,14 +33,13 @@ function KontoInner() {
     setLoading(true);
     setError("");
     const navn = `${fornavn} ${etternavn}`.trim();
-    const { data, error: err } = await supabase.auth.signUp({
-      email, password,
-      options: { data: { navn, telefon } },
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, navn, telefon }),
     });
-    if (err) { setError(err.message); setLoading(false); return; }
-    if (data.user) {
-      await supabase.from("profiles").upsert({ id: data.user.id, navn, email, telefon });
-    }
+    const json = await res.json();
+    if (!res.ok) { setError(json.error || "Noe gikk galt"); setLoading(false); return; }
     setSuccess(true);
     setLoading(false);
   };
@@ -100,7 +99,7 @@ function KontoInner() {
                 </svg>
               </div>
               <p className="font-black text-white text-lg mb-2">Konto opprettet!</p>
-              <p className="text-sm mb-5" style={{ color: "#64748b" }}>Sjekk e-posten din for å bekrefte kontoen.</p>
+              <p className="text-sm mb-5" style={{ color: "#64748b" }}>Du kan nå logge inn med e-post og passord.</p>
               <button onClick={() => { setMode("login"); setSuccess(false); }}
                 className="text-sm font-bold px-6 py-3 rounded-full text-white"
                 style={{ background: "#7c3aed" }}>

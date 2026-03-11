@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 const packages = [
   {
@@ -22,10 +23,9 @@ const packages = [
 ];
 
 export default function Packages() {
+  const router = useRouter();
   const handleVelg = (value: string) => {
-    const select = document.getElementById("pakke-select") as HTMLSelectElement;
-    if (select) select.value = value;
-    document.getElementById("bestill")?.scrollIntoView({ behavior: "smooth" });
+    router.push(`/bestill?pakke=${value}`);
   };
 
   return (

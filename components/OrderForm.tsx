@@ -1,6 +1,6 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 
 const steps = [
   { id: 1, label: "Pakke" },
@@ -53,8 +53,17 @@ const labelStyle: React.CSSProperties = {
 
 export default function OrderForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [pakke, setPakke] = useState("");
+
+  useEffect(() => {
+    const p = searchParams.get("pakke");
+    if (p && ["standard", "gull", "vip"].includes(p)) {
+      setPakke(p);
+      setStep(2);
+    }
+  }, [searchParams]);
   const [navn, setNavn] = useState("");
   const [epost, setEpost] = useState("");
   const [russekull, setRussekull] = useState("");

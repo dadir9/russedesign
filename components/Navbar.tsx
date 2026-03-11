@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 const navLinks = [
   ["Pakker", "/#pakker"],
@@ -9,6 +10,13 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setLoggedIn(!!s));
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <nav
@@ -35,12 +43,12 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right: Min konto */}
+        {/* Right: Min konto / Dashboard */}
         <div className="hidden md:flex items-center gap-3">
-          <a href="/konto"
+          <a href={loggedIn ? "/konto/dashboard" : "/konto"}
             className="text-sm font-bold px-5 py-2 rounded-full transition-all hover:opacity-90"
             style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.25)" }}>
-            Min konto
+            {loggedIn ? "Min side" : "Logg inn"}
           </a>
         </div>
 
@@ -66,10 +74,10 @@ export default function Navbar() {
               {label}
             </a>
           ))}
-          <a href="/konto" onClick={() => setOpen(false)}
+          <a href={loggedIn ? "/konto/dashboard" : "/konto"} onClick={() => setOpen(false)}
             className="mt-2 text-center text-sm font-bold py-3 rounded-full"
             style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>
-            Min konto
+            {loggedIn ? "Min side" : "Logg inn"}
           </a>
         </div>
       )}

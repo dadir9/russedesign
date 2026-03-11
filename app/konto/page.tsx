@@ -1,5 +1,5 @@
 "use client";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -8,6 +8,12 @@ function KontoInner() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/konto/dashboard";
   const [mode, setMode] = useState<"register" | "login">("register");
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) router.push(next);
+    });
+  }, [next, router]);
   const [fornavn, setFornavn] = useState("");
   const [etternavn, setEtternavn] = useState("");
   const [email, setEmail] = useState("");

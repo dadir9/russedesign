@@ -8,12 +8,13 @@ type Order = {
 type GalleryImage = { name: string; url: string };
 type SiteContent = Record<string, string>;
 
-const statuses = ["ny", "under arbeid", "levert", "avbrutt"];
+const statuses = ["ny", "under arbeid", "levert", "avbrutt", "refundert"];
 const statusColors: Record<string, { bg: string; text: string; dot: string }> = {
   ny:            { bg: "#fef3c7", text: "#d97706", dot: "#f59e0b" },
   "under arbeid":{ bg: "#dbeafe", text: "#1d4ed8", dot: "#3b82f6" },
   levert:        { bg: "#dcfce7", text: "#15803d", dot: "#10b981" },
   avbrutt:       { bg: "#fee2e2", text: "#dc2626", dot: "#ef4444" },
+  refundert:     { bg: "#f3e8ff", text: "#7c3aed", dot: "#a855f7" },
 };
 const packagePrices: Record<string, number> = { standard: 2990, gull: 4490, vip: 6990 };
 const packageNames: Record<string, string> = { standard: "Standard", gull: "Gull", vip: "VIP" };
@@ -97,6 +98,25 @@ export default function AdminPage() {
     });
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
     if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
+  };
+
+  const cancelOrder = async (id: string) => {
+    if (!confirm("Er du sikker på at du vil avslutte denne bestillingen?")) return;
+    await updateStatus(id, "avbrutt");
+  };
+
+  const refundOrder = async (order: Order) => {
+    if (!confirm(`Refunder ${order.navn} (${packageNames[order.pakke] ?? order.pakke})?\n\nKunden vil motta en e-post med refusjonsbekreftelse.`)) return;
+    const res = await fetch("/api/admin/orders/refund", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-password": password },
+      body: JSON.stringify({ orderId: order.id }),
+    });
+    const json = await res.json();
+    if (!res.ok) { alert(json.error || "Noe gikk galt"); return; }
+    setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: "refundert" } : o));
+    if (selected?.id === order.id) setSelected(prev => prev ? { ...prev, status: "refundert" } : null);
+    alert("Refusjon fullført! Kunden er varslet på e-post.");
   };
 
   const uploadImages = async (files: FileList | null) => {
@@ -444,7 +464,7 @@ export default function AdminPage() {
                                   </div>
                                   <div>
                                     <p style={{ fontSize: 12, fontWeight: 700, color: "#7c3aed", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Endre status</p>
-                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
                                       {statuses.map(s => {
                                         const sc2 = statusColors[s];
                                         const isActive = o.status === s;
@@ -456,6 +476,28 @@ export default function AdminPage() {
                                           </button>
                                         );
                                       })}
+                                    </div>
+                                    <p style={{ fontSize: 12, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Handlinger</p>
+                                    <div style={{ display: "flex", gap: 8 }}>
+                                      {o.status !== "avbrutt" && o.status !== "refundert" && (
+                                        <button onClick={e => { e.stopPropagation(); cancelOrder(o.id); }}
+                                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, background: "#fee2e2", color: "#dc2626" }}>
+                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                          Avslutt bestilling
+                                        </button>
+                                      )}
+                                      {o.status !== "refundert" && o.status !== "avbrutt" && (
+                                        <button onClick={e => { e.stopPropagation(); refundOrder(o); }}
+                                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, background: "#f3e8ff", color: "#7c3aed" }}>
+                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                                          Refunder kunde
+                                        </button>
+                                      )}
+                                      {(o.status === "avbrutt" || o.status === "refundert") && (
+                                        <p style={{ fontSize: 13, color: "#94a3b8", padding: "8px 0" }}>
+                                          {o.status === "refundert" ? "✓ Kunden er refundert" : "✗ Bestilling avsluttet"}
+                                        </p>
+                                      )}
                                     </div>
                                   </div>
                                 </div>

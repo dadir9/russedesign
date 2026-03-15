@@ -23,11 +23,8 @@ export default function Navbar() {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", height: 64, gap: 40 }}>
 
         {/* Logo */}
-        <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flexShrink: 0 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ color: "#fff", fontWeight: 900, fontSize: 13 }}>RD</span>
-          </div>
-          <span style={{ fontWeight: 800, fontSize: 15, color: "#111827" }}>RusseDesign</span>
+        <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+          <span style={{ fontWeight: 900, fontSize: 16, color: "#111827" }}>RusseDesign</span>
         </a>
 
         {/* Nav links */}

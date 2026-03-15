@@ -1,3 +1,4 @@
+"use client";
 export default function Footer() {
   return (
     <footer style={{ background: "#111827", padding: "64px 24px 40px" }}>
@@ -9,10 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none", marginBottom: 16 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ color: "#fff", fontWeight: 900, fontSize: 12 }}>RD</span>
-              </div>
-              <span style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>RusseDesign</span>
+                <span style={{ fontWeight: 900, fontSize: 16, color: "#fff" }}>RusseDesign</span>
             </a>
             <p style={{ fontSize: 14, color: "#6b7280", lineHeight: 1.6, maxWidth: 280, margin: "0 0 20px" }}>
               Profesjonelt russelogodesign til russekofter, biler og busser. Norges raskeste levering.

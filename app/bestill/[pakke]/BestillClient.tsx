@@ -4,33 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 type PackageData = {
-  name: string;
-  price: number;
-  deposit: number;
-  badge: string | null;
-  color: string;
-  description: string;
-  features: string[];
-  delivery: string;
-};
-
-const inputStyle: React.CSSProperties = {
-  background: "#13131f",
-  border: "1px solid rgba(255,255,255,0.08)",
-  borderRadius: "10px",
-  color: "#f1f5f9",
-  width: "100%",
-  padding: "11px 14px",
-  fontSize: "14px",
-  outline: "none",
-};
-
-const sectionCard: React.CSSProperties = {
-  background: "#0d0d14",
-  border: "1px solid rgba(255,255,255,0.07)",
-  borderRadius: "20px",
-  padding: "24px",
-  marginBottom: "16px",
+  name: string; price: number; deposit: number; badge: string | null;
+  color: string; description: string; features: string[]; delivery: string;
 };
 
 export default function BestillClient({ pakke, data }: { pakke: string; data: PackageData }) {
@@ -58,242 +33,251 @@ export default function BestillClient({ pakke, data }: { pakke: string; data: Pa
 
   const handleFiles = (f: FileList | null) => {
     if (!f) return;
-    setFiles((prev) => [...prev, ...Array.from(f).filter((x) => x.type.startsWith("image/"))].slice(0, 5));
+    setFiles(prev => [...prev, ...Array.from(f).filter(x => x.type.startsWith("image/"))].slice(0, 5));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     const fd = new FormData();
     fd.append("navn", navn); fd.append("epost", epost); fd.append("pakke", pakke);
     fd.append("russekull", russekull); fd.append("beskrivelse", beskrivelse);
-    files.forEach((f) => fd.append("bilder", f));
+    files.forEach(f => fd.append("bilder", f));
     const res = await fetch("/api/orders", { method: "POST", body: fd });
     const json = await res.json();
     if (!res.ok) { setError(json.error || "Noe gikk galt."); setLoading(false); return; }
     router.push("/bestilling-bekreftet");
   };
 
-  const labelStyle: React.CSSProperties = { color: "#475569", fontSize: "11px", fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" };
+  const inp: React.CSSProperties = {
+    width: "100%", padding: "11px 14px", borderRadius: 10,
+    border: "1px solid #e5e7eb", background: "#fff",
+    fontSize: 14, color: "#111827", outline: "none", boxSizing: "border-box",
+  };
+  const label: React.CSSProperties = {
+    display: "block", fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 6,
+  };
+  const card: React.CSSProperties = {
+    background: "#fff", border: "1px solid #e5e7eb",
+    borderRadius: 16, padding: 24, marginBottom: 16,
+  };
 
   return (
-    <div className="pt-20 pb-16 px-4 sm:px-6" style={{ minHeight: "100vh" }}>
-      <div className="max-w-6xl mx-auto">
+    <div style={{ minHeight: "100vh", background: "#f9fafb", paddingTop: 80 }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px 64px" }}>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs mb-8" style={{ color: "#334155" }}>
-          <a href="/" className="hover:text-white transition-colors">Hjem</a>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13, color: "#9ca3af", marginBottom: 32 }}>
+          <a href="/" style={{ color: "#6b7280", textDecoration: "none" }}>Hjem</a>
           <span>/</span>
-          <a href="/#pakker" className="hover:text-white transition-colors">Pakker</a>
+          <a href="/#pakker" style={{ color: "#6b7280", textDecoration: "none" }}>Pakker</a>
           <span>/</span>
-          <span style={{ color: "#94a3b8" }}>{data.name}</span>
+          <span style={{ color: "#111827", fontWeight: 600 }}>{data.name}</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 24, alignItems: "start" }} className="bestill-grid">
 
           {/* ── LEFT ── */}
           <form onSubmit={handleSubmit}>
-
-            <h1 className="text-3xl font-black text-white mb-6">Betalingsmetode</h1>
+            <h1 style={{ fontSize: 28, fontWeight: 900, color: "#111827", margin: "0 0 24px", letterSpacing: "-0.02em" }}>
+              Bestillingsskjema
+            </h1>
 
             {/* Customer info */}
-            <div style={sectionCard}>
-              <p className="text-sm font-black text-white mb-4">Kundeinformasjon</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div style={card}>
+              <p style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: "0 0 16px" }}>Kundeinformasjon</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }} className="info-grid">
                 <div>
-                  <label style={labelStyle}>Navn</label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "#475569" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                      </svg>
-                    </div>
-                    <input type="text" required value={navn} onChange={(e) => setNavn(e.target.value)}
-                      placeholder="Ditt navn" style={{ ...inputStyle, paddingLeft: "34px" }} />
+                  <label style={label}>Navn</label>
+                  <div style={{ position: "relative" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }}>
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <input type="text" required value={navn} onChange={e => setNavn(e.target.value)}
+                      placeholder="Ditt navn" style={{ ...inp, paddingLeft: 34 }} />
                   </div>
                 </div>
                 <div>
-                  <label style={labelStyle}>E-post</label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "#475569" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>
-                      </svg>
-                    </div>
-                    <input type="email" required value={epost} onChange={(e) => setEpost(e.target.value)}
-                      placeholder="din@epost.no" style={{ ...inputStyle, paddingLeft: "34px" }} />
+                  <label style={label}>E-post</label>
+                  <div style={{ position: "relative" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }}>
+                      <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>
+                    </svg>
+                    <input type="email" required value={epost} onChange={e => setEpost(e.target.value)}
+                      placeholder="din@epost.no" style={{ ...inp, paddingLeft: 34 }} />
                   </div>
                 </div>
                 <div>
-                  <label style={labelStyle}>Telefon</label>
-                  <div className="relative flex">
-                    <div className="flex items-center gap-1 px-3 rounded-l-xl flex-shrink-0"
-                      style={{ background: "#1a1a2e", border: "1px solid rgba(255,255,255,0.08)", borderRight: "none" }}>
-                      <span className="text-sm">🇳🇴</span>
-                      <span className="text-xs" style={{ color: "#64748b" }}>+47</span>
+                  <label style={label}>Telefonnummer</label>
+                  <div style={{ display: "flex" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "0 10px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRight: "none", borderRadius: "10px 0 0 10px", flexShrink: 0 }}>
+                      <span>🇳🇴</span>
+                      <span style={{ fontSize: 12, color: "#6b7280", fontWeight: 600 }}>+47</span>
                     </div>
-                    <input type="tel" value={telefon} onChange={(e) => setTelefon(e.target.value)}
+                    <input type="tel" value={telefon} onChange={e => setTelefon(e.target.value)}
                       placeholder="XXX XX XXX"
-                      style={{ ...inputStyle, borderRadius: "0 10px 10px 0", borderLeft: "none" }} />
-                    {telefon && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-                        </svg>
-                      </div>
-                    )}
+                      style={{ ...inp, borderRadius: "0 10px 10px 0", borderLeft: "none", flex: 1 }} />
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Total amount — like the screenshot */}
+            <div style={{ ...card, textAlign: "center", background: "#fff" }}>
+              <p style={{ fontSize: 13, color: "#9ca3af", margin: "0 0 8px" }}>Depositum å betale nå</p>
+              <p style={{ fontSize: 40, fontWeight: 900, color: "#111827", margin: "0 0 4px", letterSpacing: "-0.03em" }}>
+                {data.deposit.toLocaleString("no")} kr
+              </p>
+              <p style={{ fontSize: 13, color: "#9ca3af", margin: 0 }}>
+                Resterende {data.deposit.toLocaleString("no")} kr betales ved levering
+              </p>
             </div>
 
             {/* Design info */}
-            <div style={sectionCard}>
-              <p className="text-sm font-black text-white mb-4">Designinformasjon</p>
-              <div className="space-y-3">
+            <div style={card}>
+              <p style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: "0 0 16px" }}>Designinformasjon</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>Russekull / År</label>
+                  <label style={label}>Russekull / År</label>
                   <input type="text" required placeholder="f.eks. Russ 2026" value={russekull}
-                    onChange={(e) => setRussekull(e.target.value)} style={inputStyle} />
+                    onChange={e => setRussekull(e.target.value)} style={inp} />
                 </div>
                 <div>
-                  <label style={labelStyle}>Beskriv ønsket design</label>
+                  <label style={label}>Beskriv ønsket design</label>
                   <textarea required rows={4} placeholder="Farger, stil, navn, inspirasjon..."
-                    value={beskrivelse} onChange={(e) => setBeskrivelse(e.target.value)}
-                    style={{ ...inputStyle, resize: "none" }} />
+                    value={beskrivelse} onChange={e => setBeskrivelse(e.target.value)}
+                    style={{ ...inp, resize: "none" }} />
                 </div>
               </div>
             </div>
 
-            {/* Image upload */}
-            <div style={sectionCard}>
-              <p className="text-sm font-black text-white mb-4">
-                Bilder / inspirasjon <span className="font-normal text-xs" style={{ color: "#334155" }}>(valgfritt, maks 5)</span>
+            {/* File upload */}
+            <div style={card}>
+              <p style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: "0 0 4px" }}>
+                Inspirasjonbilder
+                <span style={{ fontSize: 12, fontWeight: 400, color: "#9ca3af", marginLeft: 6 }}>(valgfritt, maks 5)</span>
               </p>
-              <div
-                onClick={() => inputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+              <div onClick={() => inputRef.current?.click()}
+                onDragOver={e => { e.preventDefault(); setDragging(true); }}
                 onDragLeave={() => setDragging(false)}
-                onDrop={(e) => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files); }}
-                className="rounded-xl cursor-pointer flex flex-col items-center justify-center py-7 px-4 text-center transition-all"
-                style={{ border: `2px dashed ${dragging ? "#7c3aed" : "rgba(255,255,255,0.07)"}`, background: dragging ? "rgba(124,58,237,0.06)" : "transparent" }}
-              >
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style={{ background: "rgba(124,58,237,0.12)" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                onDrop={e => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files); }}
+                style={{ border: `2px dashed ${dragging ? "#7c3aed" : "#e5e7eb"}`, borderRadius: 12, padding: "28px 20px", textAlign: "center", cursor: "pointer", marginTop: 12, background: dragging ? "#f5f3ff" : "#fafafa", transition: "all 0.2s" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "#ede9fe", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                 </div>
-                <p className="text-sm font-semibold text-white">Dra og slipp bilder her</p>
-                <p className="text-xs mt-1" style={{ color: "#475569" }}>eller <span style={{ color: "#7c3aed" }}>klikk for å velge</span></p>
-                <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
+                <p style={{ fontSize: 14, fontWeight: 600, color: "#374151", margin: "0 0 4px" }}>Dra og slipp bilder her</p>
+                <p style={{ fontSize: 13, color: "#9ca3af", margin: 0 }}>eller <span style={{ color: "#7c3aed", fontWeight: 600 }}>klikk for å velge</span></p>
+                <input ref={inputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={e => handleFiles(e.target.files)} />
               </div>
               {files.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
                   {files.map((file, i) => (
-                    <div key={i} className="relative">
-                      <img src={URL.createObjectURL(file)} alt="" className="w-14 h-14 object-cover rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.08)" }} />
-                      <button type="button" onClick={() => setFiles((p) => p.filter((_, idx) => idx !== i))}
-                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-black"
-                        style={{ background: "#ef4444" }}>×</button>
+                    <div key={i} style={{ position: "relative" }}>
+                      <img src={URL.createObjectURL(file)} alt="" style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 10, border: "1px solid #e5e7eb" }} />
+                      <button type="button" onClick={() => setFiles(p => p.filter((_, idx) => idx !== i))}
+                        style={{ position: "absolute", top: -6, right: -6, width: 18, height: 18, borderRadius: "50%", background: "#ef4444", color: "#fff", border: "none", cursor: "pointer", fontSize: 11, fontWeight: 900, display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            {error && <p className="text-sm text-center mb-4" style={{ color: "#ef4444" }}>{error}</p>}
+            {error && <p style={{ color: "#ef4444", fontSize: 14, textAlign: "center", marginBottom: 12 }}>{error}</p>}
           </form>
 
           {/* ── RIGHT — Order summary ── */}
-          <div className="lg:sticky lg:top-24">
-            <div style={{ ...sectionCard, marginBottom: 0 }}>
+          <div style={{ position: "sticky", top: 88 }}>
+            <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
 
               {/* Order ID */}
-              <div className="mb-4">
-                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#475569" }}>Order ID</p>
-                <p className="text-sm font-mono font-bold" style={{ color: "#94a3b8" }}>{orderId}</p>
+              <div style={{ padding: "20px 24px", borderBottom: "1px solid #f3f4f6" }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 4px" }}>Ordre ID</p>
+                <p style={{ fontSize: 14, fontWeight: 700, color: "#374151", margin: 0, fontFamily: "monospace" }}>{orderId}</p>
               </div>
 
-              {/* Package visual */}
-              <div className="rounded-2xl p-5 mb-5 flex items-center gap-4"
-                style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.15)" }}>
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: `linear-gradient(135deg, ${data.color}33, rgba(236,72,153,0.2))`, border: `1px solid ${data.color}44` }}>
-                  <span className="text-2xl font-black" style={{ color: data.color }}>R</span>
+              {/* Package card */}
+              <div style={{ padding: "20px 24px", borderBottom: "1px solid #f3f4f6", display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ width: 64, height: 64, borderRadius: 14, background: "linear-gradient(135deg, #f5f3ff, #fce7f3)", border: "1px solid #ede9fe", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 26, fontWeight: 900, background: "linear-gradient(135deg, #7c3aed, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>R</span>
                 </div>
-                <div>
-                  <p className="font-black text-white">{data.name} pakke</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>Profesjonelt russelogodesign</p>
-                  {data.badge && (
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block"
-                      style={{ background: `${data.color}22`, color: data.color }}>{data.badge}</span>
-                  )}
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: "0 0 2px" }}>{data.name} pakke</p>
+                  <p style={{ fontSize: 12, color: "#9ca3af", margin: "0 0 4px" }}>Profesjonelt russelogodesign</p>
+                  {data.badge && <span style={{ fontSize: 11, fontWeight: 700, background: "#ede9fe", color: "#7c3aed", padding: "2px 8px", borderRadius: 99 }}>{data.badge}</span>}
                 </div>
-                <p className="ml-auto font-black text-white whitespace-nowrap">{data.price.toLocaleString("no")} kr</p>
+                <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", whiteSpace: "nowrap" }}>{data.price.toLocaleString("no")} kr</p>
               </div>
 
               {/* Payment summary */}
-              <div className="mb-5">
-                <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: "#475569" }}>Betalingsoversikt</p>
-                <div className="space-y-2.5">
-                  <div className="flex justify-between text-sm">
-                    <span style={{ color: "#64748b" }}>{data.name} pakke</span>
-                    <span className="font-bold text-white">{data.price.toLocaleString("no")} kr</span>
+              <div style={{ padding: "20px 24px", borderBottom: "1px solid #f3f4f6" }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#374151", margin: "0 0 14px" }}>Betalingsoversikt</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
+                    <span style={{ color: "#6b7280" }}>{data.name} pakke</span>
+                    <span style={{ fontWeight: 600, color: "#111827" }}>{data.price.toLocaleString("no")} kr</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
                     <div>
-                      <span style={{ color: "#64748b" }}>Depositum nå</span>
-                      <p className="text-xs" style={{ color: "#334155" }}>50% ved bestilling</p>
+                      <span style={{ color: "#6b7280" }}>Depositum (50%)</span>
+                      <p style={{ fontSize: 11, color: "#9ca3af", margin: "2px 0 0" }}>Betales nå</p>
                     </div>
-                    <span className="font-bold" style={{ color: "#10b981" }}>-{data.deposit.toLocaleString("no")} kr</span>
+                    <span style={{ fontWeight: 600, color: "#10b981" }}>-{data.deposit.toLocaleString("no")} kr</span>
                   </div>
-                  <div className="h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
-                  <div className="flex justify-between">
-                    <span className="text-sm font-black text-white">Betales nå</span>
-                    <span className="text-lg font-black" style={{ color: data.color }}>{data.deposit.toLocaleString("no")} kr</span>
+                  <div style={{ height: 1, background: "#f3f4f6" }} />
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>Total nå</span>
+                    <span style={{ fontSize: 16, fontWeight: 900, color: "#7c3aed" }}>{data.deposit.toLocaleString("no")} kr</span>
                   </div>
-                  <p className="text-xs" style={{ color: "#334155" }}>Resterende {data.deposit.toLocaleString("no")} kr betales ved levering</p>
                 </div>
               </div>
 
-              {/* Delivery */}
-              <div className="flex items-center gap-2 mb-5 px-3 py-2.5 rounded-xl"
-                style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.15)" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              {/* Delivery badge */}
+              <div style={{ padding: "14px 24px", borderBottom: "1px solid #f3f4f6", display: "flex", alignItems: "center", gap: 8, background: "#f0fdf4" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                 </svg>
-                <span className="text-xs font-bold" style={{ color: "#10b981" }}>Levering innen {data.delivery}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#16a34a" }}>Levering innen {data.delivery}</span>
               </div>
 
-              {/* Submit */}
-              <button type="submit" form="bestill-form" onClick={handleSubmit} disabled={loading}
-                className="w-full py-4 rounded-xl font-black text-white text-sm transition-all hover:opacity-90 disabled:opacity-40"
-                style={{ background: "#7c3aed", boxShadow: "0 8px 24px rgba(124,58,237,0.35)" }}>
-                {loading ? "Sender..." : `Send bestilling →`}
-              </button>
+              {/* CTA */}
+              <div style={{ padding: "20px 24px" }}>
+                <button type="submit" form="bestill-form" onClick={handleSubmit} disabled={loading}
+                  style={{ width: "100%", padding: "14px", borderRadius: 12, background: "#7c3aed", color: "#fff", fontWeight: 800, fontSize: 15, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, marginBottom: 12 }}>
+                  {loading ? "Sender..." : "Send bestilling →"}
+                </button>
 
-              {/* Security */}
-              <div className="flex items-center justify-center gap-1.5 mt-3">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#334155" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-                </svg>
-                <p className="text-xs" style={{ color: "#334155" }}>Betalinger er sikre og krypterte</p>
-              </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 14 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                  </svg>
+                  <span style={{ fontSize: 12, color: "#9ca3af" }}>Betalinger er sikre og krypterte</span>
+                </div>
 
-              {/* Footer */}
-              <div className="flex items-center justify-center gap-3 mt-4">
-                <p className="text-xs" style={{ color: "#1e293b" }}>Powered by <span className="font-bold" style={{ color: "#475569" }}>RusseDesign</span></p>
-                <span style={{ color: "#1e293b" }}>·</span>
-                <a href="#" className="text-xs hover:text-white transition-colors" style={{ color: "#334155" }}>Vilkår</a>
-                <span style={{ color: "#1e293b" }}>·</span>
-                <a href="#" className="text-xs hover:text-white transition-colors" style={{ color: "#334155" }}>Personvern</a>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <span style={{ fontSize: 12, color: "#9ca3af" }}>Powered by <strong style={{ color: "#6b7280" }}>RusseDesign</strong></span>
+                  <span style={{ color: "#e5e7eb" }}>·</span>
+                  <a href="#" style={{ fontSize: 12, color: "#9ca3af", textDecoration: "none" }}>Vilkår</a>
+                  <span style={{ color: "#e5e7eb" }}>·</span>
+                  <a href="#" style={{ fontSize: 12, color: "#9ca3af", textDecoration: "none" }}>Personvern</a>
+                </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .bestill-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .info-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 }

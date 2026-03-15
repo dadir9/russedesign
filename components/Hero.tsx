@@ -20,7 +20,7 @@ export default function Hero() {
     <>
       <section
         className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-16"
-        style={{ background: "#0a0a0f" }}
+        style={{ background: "#ffffff" }}
       >
         {/* Subtle background glow */}
         <div
@@ -31,7 +31,18 @@ export default function Hero() {
             width: "600px",
             height: "600px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            bottom: "10%",
+            left: "5%",
+            width: "400px",
+            height: "400px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(236,72,153,0.06) 0%, transparent 70%)",
           }}
         />
 
@@ -46,17 +57,16 @@ export default function Hero() {
 
             {/* Heading */}
             <h1 className="font-black leading-[1.05] tracking-tight mb-6" style={{ fontSize: "clamp(2.8rem, 6vw, 5rem)" }}>
-              <span className="text-white">Vi lager din,</span>
+              <span style={{ color: "#0f172a" }}>Vi lager din,</span>
               <span className="block relative w-fit mt-1">
-                <span style={{ background: "linear-gradient(90deg, #a78bfa, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                <span style={{ background: "linear-gradient(90deg, #7c3aed, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                   unike
                 </span>
-                {/* Underline SVG like Jadoo */}
                 <svg className="absolute -bottom-2 left-0 w-full" height="6" viewBox="0 0 200 6" preserveAspectRatio="none">
                   <path d="M0 4 Q50 0 100 4 Q150 8 200 3" stroke="#ec4899" strokeWidth="2.5" fill="none" strokeLinecap="round" />
                 </svg>
               </span>
-              <span className="block text-white mt-1">russelogo.</span>
+              <span className="block mt-1" style={{ color: "#0f172a" }}>russelogo.</span>
             </h1>
 
             <p className="text-base sm:text-lg mb-10 max-w-md leading-relaxed" style={{ color: "#64748b" }}>
@@ -67,13 +77,13 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-5">
               <SparkleButton href="/bestill">Bestill logo nå</SparkleButton>
 
-              <a href="#galleri" className="flex items-center gap-3 font-semibold text-sm transition-all hover:opacity-80" style={{ color: "#94a3b8" }}>
+              <a href="#galleri" className="flex items-center gap-3 font-semibold text-sm transition-all hover:opacity-80" style={{ color: "#64748b" }}>
                 <span
                   className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
-                  style={{ border: "1.5px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.04)" }}
+                  style={{ border: "1.5px solid rgba(0,0,0,0.12)", background: "rgba(124,58,237,0.06)" }}
                 >
                   <svg width="13" height="15" viewBox="0 0 13 15" fill="none">
-                    <path d="M1 1.5L12 7.5L1 13.5V1.5Z" fill="#a78bfa" />
+                    <path d="M1 1.5L12 7.5L1 13.5V1.5Z" fill="#7c3aed" />
                   </svg>
                 </span>
                 Se eksempler
@@ -89,7 +99,7 @@ export default function Hero() {
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
-                  background: "radial-gradient(circle at 40% 35%, rgba(124,58,237,0.22), rgba(236,72,153,0.08) 60%, transparent 80%)",
+                  background: "radial-gradient(circle at 40% 35%, rgba(124,58,237,0.12), rgba(236,72,153,0.06) 60%, transparent 80%)",
                 }}
               />
 
@@ -99,8 +109,8 @@ export default function Hero() {
                 style={{
                   top: "8%", left: "8%", right: "8%", bottom: "8%",
                   borderRadius: "50%",
-                  background: "rgba(124,58,237,0.07)",
-                  border: "1px solid rgba(124,58,237,0.18)",
+                  background: "rgba(124,58,237,0.05)",
+                  border: "1px solid rgba(124,58,237,0.15)",
                 }}
               />
 
@@ -110,15 +120,15 @@ export default function Hero() {
                   <div
                     className="w-44 h-44 rounded-[2.5rem] flex items-center justify-center"
                     style={{
-                      background: "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(236,72,153,0.15))",
-                      border: "1px solid rgba(124,58,237,0.35)",
+                      background: "linear-gradient(135deg, rgba(124,58,237,0.12), rgba(236,72,153,0.08))",
+                      border: "1px solid rgba(124,58,237,0.2)",
                       backdropFilter: "blur(16px)",
-                      boxShadow: "0 20px 60px rgba(124,58,237,0.25)",
+                      boxShadow: "0 20px 60px rgba(124,58,237,0.12)",
                     }}
                   >
                     <span
                       className="text-8xl font-black"
-                      style={{ background: "linear-gradient(135deg, #a78bfa, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                      style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
                     >
                       R
                     </span>
@@ -127,7 +137,7 @@ export default function Hero() {
                   {/* Floating badge — VIP */}
                   <div
                     className="absolute -top-7 -right-14 px-3 py-1.5 rounded-full text-xs font-bold text-white whitespace-nowrap"
-                    style={{ background: "#7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.5)" }}
+                    style={{ background: "#7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.3)" }}
                   >
                     ✦ VIP Design
                   </div>
@@ -135,7 +145,7 @@ export default function Hero() {
                   {/* Floating badge — levering */}
                   <div
                     className="absolute -bottom-7 -left-14 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap"
-                    style={{ background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)" }}
+                    style={{ background: "rgba(16,185,129,0.1)", color: "#059669", border: "1px solid rgba(16,185,129,0.25)" }}
                   >
                     ⚡ 48t levering
                   </div>
@@ -143,7 +153,7 @@ export default function Hero() {
                   {/* Floating badge — count */}
                   <div
                     className="absolute top-1/2 -right-20 -translate-y-1/2 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap"
-                    style={{ background: "rgba(255,255,255,0.05)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.2)" }}
+                    style={{ background: "rgba(124,58,237,0.08)", color: "#7c3aed", border: "1px solid rgba(124,58,237,0.15)" }}
                   >
                     500+ logoer
                   </div>
@@ -151,14 +161,14 @@ export default function Hero() {
               </div>
 
               {/* Decorative dots */}
-              <div className="absolute top-10 left-10 w-3 h-3 rounded-full" style={{ background: "#7c3aed", opacity: 0.7 }} />
-              <div className="absolute bottom-14 right-10 w-2.5 h-2.5 rounded-full" style={{ background: "#ec4899", opacity: 0.7 }} />
-              <div className="absolute top-1/3 left-5 w-2 h-2 rounded-full" style={{ background: "#a78bfa", opacity: 0.5 }} />
-              <div className="absolute bottom-1/3 right-5 w-2 h-2 rounded-full" style={{ background: "#7c3aed", opacity: 0.4 }} />
+              <div className="absolute top-10 left-10 w-3 h-3 rounded-full" style={{ background: "#7c3aed", opacity: 0.5 }} />
+              <div className="absolute bottom-14 right-10 w-2.5 h-2.5 rounded-full" style={{ background: "#ec4899", opacity: 0.5 }} />
+              <div className="absolute top-1/3 left-5 w-2 h-2 rounded-full" style={{ background: "#a78bfa", opacity: 0.4 }} />
+              <div className="absolute bottom-1/3 right-5 w-2 h-2 rounded-full" style={{ background: "#7c3aed", opacity: 0.3 }} />
 
               {/* Star decorations */}
-              <span className="absolute top-12 right-20 text-2xl" style={{ color: "#a78bfa", opacity: 0.5 }}>✦</span>
-              <span className="absolute bottom-16 left-20 text-xl" style={{ color: "#ec4899", opacity: 0.4 }}>✦</span>
+              <span className="absolute top-12 right-20 text-2xl" style={{ color: "#7c3aed", opacity: 0.4 }}>✦</span>
+              <span className="absolute bottom-16 left-20 text-xl" style={{ color: "#ec4899", opacity: 0.35 }}>✦</span>
             </div>
           </div>
         </div>
@@ -166,15 +176,15 @@ export default function Hero() {
         {/* Stats bar pinned to bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 border-t" style={{ borderColor: "rgba(0,0,0,0.08)" }}>
               {stats.map((s, i) => (
                 <div
                   key={i}
                   className="flex flex-col items-center py-6 px-4"
-                  style={{ borderRight: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none" }}
+                  style={{ borderRight: i < 3 ? "1px solid rgba(0,0,0,0.08)" : "none" }}
                 >
-                  <p className="text-2xl sm:text-3xl font-black text-white">{s.num}</p>
-                  <p className="text-xs mt-1" style={{ color: "#475569" }}>{s.label}</p>
+                  <p className="text-2xl sm:text-3xl font-black" style={{ color: "#0f172a" }}>{s.num}</p>
+                  <p className="text-xs mt-1" style={{ color: "#94a3b8" }}>{s.label}</p>
                 </div>
               ))}
             </div>
@@ -183,11 +193,11 @@ export default function Hero() {
       </section>
 
       {/* Marquee */}
-      <div className="w-full overflow-hidden py-5 border-y" style={{ background: "#0d0d14", borderColor: "rgba(255,255,255,0.05)" }}>
+      <div className="w-full overflow-hidden py-5 border-y" style={{ background: "#f8fafc", borderColor: "rgba(0,0,0,0.06)" }}>
         <div className="flex gap-10 marquee-track whitespace-nowrap">
           {marqueeItems.map((item, i) => (
-            <span key={i} className="text-sm font-bold flex items-center gap-3 flex-shrink-0" style={{ color: "#334155" }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-700 inline-block" />
+            <span key={i} className="text-sm font-bold flex items-center gap-3 flex-shrink-0" style={{ color: "#94a3b8" }}>
+              <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: "#7c3aed" }} />
               {item}
             </span>
           ))}

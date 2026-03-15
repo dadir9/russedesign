@@ -19,66 +19,68 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav
-      className="fixed top-0 w-full z-50 backdrop-blur-md"
-      style={{ background: "rgba(255,255,255,0.92)", borderBottom: "1px solid rgba(0,0,0,0.08)" }}
-    >
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between h-16">
+    <nav style={{ position: "fixed", top: 0, width: "100%", zIndex: 50, background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #e5e7eb", backdropFilter: "blur(12px)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", height: 64, gap: 40 }}>
 
-        {/* Desktop nav links — left */}
-        <div className="hidden md:flex items-center gap-8">
+        {/* Logo */}
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flexShrink: 0 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontWeight: 900, fontSize: 13 }}>RD</span>
+          </div>
+          <span style={{ fontWeight: 800, fontSize: 15, color: "#111827" }}>RusseDesign</span>
+        </a>
+
+        {/* Nav links */}
+        <div style={{ display: "flex", gap: 32, flex: 1 }} className="hidden md:flex">
           {navLinks.map(([label, href]) => (
-            <a key={label} href={href}
-              className="text-sm font-medium transition-all hover:text-gray-900 relative group"
-              style={{ color: "#64748b" }}>
+            <a key={label} href={href} style={{ fontSize: 14, fontWeight: 500, color: "#6b7280", textDecoration: "none", transition: "color 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#111827")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#6b7280")}>
               {label}
-              <span className="absolute -bottom-1 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-300 rounded-full"
-                style={{ background: "#7c3aed" }} />
             </a>
           ))}
         </div>
 
-        {/* Logo — center on mobile, centered on desktop */}
-        <a href="/" className="flex items-center absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
-          <span className="font-black text-base" style={{ color: "#0f172a" }}>RusseDesign</span>
-        </a>
-
-        {/* Right: Min konto / Dashboard */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right side */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginLeft: "auto" }} className="hidden md:flex">
           <a href={loggedIn ? "/konto/dashboard" : "/konto"}
-            className="text-sm font-bold px-5 py-2 rounded-full transition-all hover:opacity-90"
-            style={{ background: "rgba(124,58,237,0.1)", color: "#7c3aed", border: "1px solid rgba(124,58,237,0.2)" }}>
+            style={{ fontSize: 14, fontWeight: 500, color: "#374151", textDecoration: "none" }}>
             {loggedIn ? "Min side" : "Logg inn"}
+          </a>
+          <a href="/bestill"
+            style={{ fontSize: 14, fontWeight: 700, color: "#fff", background: "#7c3aed", padding: "8px 18px", borderRadius: 8, textDecoration: "none" }}>
+            Bestill nå
           </a>
         </div>
 
         {/* Mobile hamburger */}
-        <button className="md:hidden p-2 rounded-lg" onClick={() => setOpen(!open)}
-          style={{ background: "rgba(0,0,0,0.06)" }}>
-          <div className="w-5 space-y-1.5">
-            <span className="block h-0.5 w-5 rounded transition-all" style={{ background: "#0f172a", transform: open ? "rotate(45deg) translateY(8px)" : "none" }} />
-            <span className="block h-0.5 w-5 rounded transition-all" style={{ background: "#0f172a", opacity: open ? 0 : 1 }} />
-            <span className="block h-0.5 w-5 rounded transition-all" style={{ background: "#0f172a", transform: open ? "rotate(-45deg) translateY(-8px)" : "none" }} />
-          </div>
+        <button style={{ marginLeft: "auto", display: "flex", flexDirection: "column", gap: 5, padding: 8, background: "none", border: "none", cursor: "pointer" }}
+          className="md:hidden" onClick={() => setOpen(!open)}>
+          <span style={{ display: "block", width: 20, height: 2, background: "#374151", borderRadius: 2, transition: "all 0.2s", transform: open ? "rotate(45deg) translateY(7px)" : "none" }} />
+          <span style={{ display: "block", width: 20, height: 2, background: "#374151", borderRadius: 2, transition: "all 0.2s", opacity: open ? 0 : 1 }} />
+          <span style={{ display: "block", width: 20, height: 2, background: "#374151", borderRadius: 2, transition: "all 0.2s", transform: open ? "rotate(-45deg) translateY(-7px)" : "none" }} />
         </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-6 pb-4 flex flex-col gap-1"
-          style={{ background: "rgba(255,255,255,0.97)", borderTop: "1px solid rgba(0,0,0,0.06)" }}>
+        <div style={{ background: "#fff", borderTop: "1px solid #e5e7eb", padding: "12px 24px 20px" }}>
           {navLinks.map(([label, href]) => (
             <a key={label} href={href} onClick={() => setOpen(false)}
-              className="text-sm font-medium py-3 px-4 rounded-xl"
-              style={{ color: "#475569" }}>
+              style={{ display: "block", padding: "12px 0", fontSize: 15, fontWeight: 500, color: "#374151", textDecoration: "none", borderBottom: "1px solid #f3f4f6" }}>
               {label}
             </a>
           ))}
-          <a href={loggedIn ? "/konto/dashboard" : "/konto"} onClick={() => setOpen(false)}
-            className="mt-2 text-center text-sm font-bold py-3 rounded-full"
-            style={{ background: "rgba(124,58,237,0.1)", color: "#7c3aed" }}>
-            {loggedIn ? "Min side" : "Logg inn"}
-          </a>
+          <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
+            <a href={loggedIn ? "/konto/dashboard" : "/konto"}
+              style={{ flex: 1, textAlign: "center", padding: "10px", borderRadius: 8, border: "1px solid #e5e7eb", fontSize: 14, fontWeight: 600, color: "#374151", textDecoration: "none" }}>
+              {loggedIn ? "Min side" : "Logg inn"}
+            </a>
+            <a href="/bestill"
+              style={{ flex: 1, textAlign: "center", padding: "10px", borderRadius: 8, background: "#7c3aed", fontSize: 14, fontWeight: 700, color: "#fff", textDecoration: "none" }}>
+              Bestill nå
+            </a>
+          </div>
         </div>
       )}
     </nav>

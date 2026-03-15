@@ -35,69 +35,90 @@ export default function Packages() {
   };
 
   return (
-    <section id="pakker" className="py-24 px-4 sm:px-6" style={{ background: "#f8fafc" }}>
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-14">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#7c3aed" }}>Priser</p>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <h2 className="text-3xl sm:text-5xl font-black leading-tight" style={{ color: "#0f172a" }}>Velg din pakke</h2>
-            <p className="text-sm" style={{ color: "#94a3b8" }}>50% depositum ved bestilling</p>
+    <section id="pakker" style={{ background: "#f9fafb", padding: "96px 24px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+
+        {/* Section header */}
+        <div style={{ marginBottom: 64 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#7c3aed", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 12px" }}>Priser</p>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 900, color: "#111827", margin: 0, letterSpacing: "-0.02em" }}>
+              Velg din pakke
+            </h2>
+            <p style={{ fontSize: 14, color: "#9ca3af", margin: 0 }}>50% depositum ved bestilling · Resten ved levering</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }} className="packages-grid">
           {packages.map((pkg) => (
-            <div
-              key={pkg.name}
-              className="relative rounded-2xl p-6 flex flex-col transition-all hover:translate-y-[-2px]"
-              style={{
-                background: pkg.highlight ? "#7c3aed" : "#ffffff",
-                border: pkg.highlight ? "none" : "1px solid #e2e8f0",
-                boxShadow: pkg.highlight ? "0 20px 60px rgba(124,58,237,0.25)" : "0 2px 12px rgba(0,0,0,0.04)",
-              }}
-            >
+            <div key={pkg.name} style={{
+              position: "relative",
+              background: pkg.highlight ? "#7c3aed" : "#ffffff",
+              border: pkg.highlight ? "none" : "1px solid #e5e7eb",
+              borderRadius: 16,
+              padding: "32px 28px",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: pkg.highlight ? "0 24px 64px rgba(124,58,237,0.3)" : "0 2px 8px rgba(0,0,0,0.04)",
+              transform: pkg.highlight ? "scale(1.03)" : "none",
+            }}>
               {pkg.badge && (
-                <div className="absolute -top-3 left-6 text-xs font-black px-3 py-1 rounded-full"
-                  style={{ background: pkg.highlight ? "#fff" : "#7c3aed", color: pkg.highlight ? "#7c3aed" : "#fff" }}>
+                <div style={{ position: "absolute", top: -12, left: 28, fontSize: 11, fontWeight: 800, letterSpacing: "0.05em", textTransform: "uppercase",
+                  background: pkg.highlight ? "#fff" : "#7c3aed", color: pkg.highlight ? "#7c3aed" : "#fff",
+                  padding: "4px 12px", borderRadius: 99 }}>
                   {pkg.badge}
                 </div>
               )}
 
-              <p className="font-black text-xl mb-1" style={{ color: pkg.highlight ? "#fff" : "#0f172a" }}>{pkg.name}</p>
-              <p className="text-3xl font-black mb-0.5" style={{ color: pkg.highlight ? "#fff" : "#0f172a" }}>
-                {pkg.price.toLocaleString("no")} <span className="text-base font-semibold">kr</span>
-              </p>
-              <p className="text-xs mb-4" style={{ color: pkg.highlight ? "rgba(255,255,255,0.6)" : "#94a3b8" }}>
-                Depositum: {(pkg.price / 2).toLocaleString("no")} kr
-              </p>
-              <p className="text-sm mb-6 leading-relaxed" style={{ color: pkg.highlight ? "rgba(255,255,255,0.7)" : "#64748b" }}>
+              <div style={{ marginBottom: 24 }}>
+                <p style={{ fontSize: 13, fontWeight: 700, color: pkg.highlight ? "rgba(255,255,255,0.7)" : "#9ca3af", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  {pkg.name}
+                </p>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                  <span style={{ fontSize: 40, fontWeight: 900, color: pkg.highlight ? "#fff" : "#111827", lineHeight: 1 }}>
+                    {pkg.price.toLocaleString("no")}
+                  </span>
+                  <span style={{ fontSize: 16, fontWeight: 600, color: pkg.highlight ? "rgba(255,255,255,0.6)" : "#9ca3af" }}>kr</span>
+                </div>
+                <p style={{ fontSize: 12, color: pkg.highlight ? "rgba(255,255,255,0.5)" : "#9ca3af", margin: "4px 0 0" }}>
+                  Depositum {(pkg.price / 2).toLocaleString("no")} kr
+                </p>
+              </div>
+
+              <p style={{ fontSize: 14, color: pkg.highlight ? "rgba(255,255,255,0.75)" : "#6b7280", lineHeight: 1.6, margin: "0 0 24px" }}>
                 {pkg.description}
               </p>
 
-              <ul className="space-y-2.5 mb-8 flex-1">
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 32px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
                 {pkg.features.map((f) => (
-                  <li key={f} className="text-sm flex items-center gap-2.5" style={{ color: pkg.highlight ? "rgba(255,255,255,0.85)" : "#475569" }}>
-                    <span className="text-xs" style={{ color: pkg.highlight ? "#c4b5fd" : "#7c3aed" }}>✓</span>
+                  <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: pkg.highlight ? "rgba(255,255,255,0.85)" : "#374151" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={pkg.highlight ? "#c4b5fd" : "#7c3aed"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                     {f}
                   </li>
                 ))}
               </ul>
 
-              <button
-                onClick={() => handleVelg(pkg.value)}
-                className="w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:opacity-80 cursor-pointer"
+              <button onClick={() => handleVelg(pkg.value)}
                 style={{
-                  background: pkg.highlight ? "#fff" : "rgba(124,58,237,0.08)",
-                  color: pkg.highlight ? "#7c3aed" : "#7c3aed",
-                  border: pkg.highlight ? "none" : "1px solid rgba(124,58,237,0.2)",
-                }}
-              >
+                  width: "100%", padding: "13px", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer", border: "none", transition: "opacity 0.2s",
+                  background: pkg.highlight ? "#fff" : "#111827",
+                  color: pkg.highlight ? "#7c3aed" : "#fff",
+                }}>
                 Velg {pkg.name} →
               </button>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .packages-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 }
